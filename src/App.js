@@ -1,9 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import { useReactToPrint } from 'react-to-print'
 // components
-import {Header, Footer, Avatar, Title, Description}
- from "./components"
+import {Avatar, Description, Footer, Header, Range, Title} from "./components"
+
+//svg
+import {ReactComponent as MailIcon} from "./assets/img/mail.svg";
+import {ReactComponent as PhoneIcon} from "./assets/img/phone.svg";
 
 const Wrapper = styled.div`
   max-width: 1200px;
@@ -13,6 +16,13 @@ const Wrapper = styled.div`
   border: 1px solid #ececec;
   box-shadow: 5px 7px 10px 4px #ececec;
   border-radius: 14px;
+  @media print {
+    box-shadow: none;
+    border: none;
+    p {
+      font-size: 120% !important;
+    }
+  }
 `
 
 const Row = styled.section`
@@ -34,62 +44,75 @@ const SideBar = styled.div`
 
 const App = () => {
 
-  const handleAvatarClick = () => console.log('avatar clicked')
-  const handlePrintClick = () => console.log('print clicked')
+  const [skillsCounter, setSkillsCounter] = React.useState(1)
+  const [worksCounter, setWorksCounter] = React.useState(1)
 
-  return (
-      <div className='ui-wrapper'>
-        <Header onClick={handlePrintClick} />
-        <div className='ui-content-wrapper'>
-          <Wrapper>
-            <div className='ui-container'>
-              <Row itemsCenter>
-                <Avatar onClick={handleAvatarClick} />
-                <div>
-                  <Title>Nick Gerner</Title>
-                  <Description>
-                    Experienced Software & Machine Learning Engineer with a
-                    demonstrated history.
-                  </Description>
-                </div>
-              </Row>
+  const componentRef = React.useRef()
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current
+  })
 
-              <Row>
-                <SideBar>
-                  <Title size='3' isUppercase>
-                    About me:
-                  </Title>
-                  <Description>Software Engineer</Description>
-                  <Description isSecondary>Washington, DC | tocode.ru</Description>
+  return (<div className='ui-wrapper'>
+    <Header onClick={handlePrint}/>
+    <div className='ui-content-wrapper'>
+      <Wrapper ref={componentRef}>
+        <div className='ui-container'>
+          <Row itemsCenter>
+            <SideBar>
+              <Avatar/>
+            </SideBar>
+            <Content>
+              <Title>Nick Gerner</Title>
+              <Description>
+                Experienced Software & Machine Learning Engineer with a
+                demonstrated history.
+              </Description>
+            </Content>
+          </Row>
 
-                  <Description isPrimary style={{ marginTop: '2rem' }}>
-                    nick@gmail.com
-                  </Description>
-                  <Description isPrimary>+1 588-6500</Description>
-                </SideBar>
+          <Row>
+            <SideBar>
+              <Title size='3' isUppercase>
+                About me:
+              </Title>
+              <Description>Software Engineer</Description>
+              <Description isSecondary>Washington, DC | tocode.ru</Description>
 
-                <Content>
-                  <Title size='3' isUppercase>
-                    Education:
-                  </Title>
-                  <Description>Stanford University - BS Electrical Engineering</Description>
+              <Description isPrimary style={{marginTop: '2rem'}}>
+                <MailIcon style={{marginRight: '0.5rem'}}/>
+                nick@gmail.com
+              </Description>
 
-                  <Title size='3' isUppercase style={{ marginTop: '3.6rem' }}>
-                    Work experience:
-                  </Title>
-                  <Description>Solutions Architect, Stripe.</Description>
+              <Description isPrimary><PhoneIcon style={{marginRight: '0.5rem'}}/>+1 588-6500</Description>
+            </SideBar>
 
-                  <Title size='3' isUppercase style={{ marginTop: '3rem' }}>
-                    Skills:
-                  </Title>
-                </Content>
-              </Row>
-            </div>
-          </Wrapper>
+            <Content>
+              <Title size='3' isUppercase>
+                Education:
+              </Title>
+              <Description>Stanford University - BS Electrical Engineering</Description>
+
+              <Title size='3' isUppercase isShownButton onClick={() => setWorksCounter(worksCounter + 1)}
+                     style={{marginTop: '3.6rem'}}>
+                Work experience:
+              </Title>
+              {new Array(worksCounter).fill(1).map((_, i) => <Description key={i}>{i + 1}. Solutions Architect,
+                Stripe.</Description>)}
+
+
+              <Title size='3' isShownButton onClick={() => setSkillsCounter(skillsCounter + 1)} isUppercase
+                     style={{marginTop: '3rem'}}>
+                Skills:
+              </Title>
+              {new Array(skillsCounter).fill(1).map((_, i) => <Range key={i}/>)}
+
+            </Content>
+          </Row>
         </div>
-        <Footer />
-      </div>
-  )
+      </Wrapper>
+    </div>
+    <Footer/>
+  </div>)
 }
 
 export default App

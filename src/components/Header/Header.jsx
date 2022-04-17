@@ -1,7 +1,8 @@
 import React from 'react'
 import propTypes from 'prop-types'
 import './Header.scss'
-import Avatar from "../UI/Avatar";
+
+import {ReactComponent as PrintIcon} from "../../assets/img/print.svg";
 
 const Header = ({onClick}) => {
   return (
@@ -10,6 +11,7 @@ const Header = ({onClick}) => {
           <div className='Header_content'>
             <span className='Header_logo'>Cv builder</span>
             <button className='ui-button isLink' onClick={onClick}>
+              <PrintIcon style={{marginRight: '0.5rem'}}/>
               Print
             </button>
           </div>
